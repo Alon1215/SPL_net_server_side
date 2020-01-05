@@ -16,6 +16,13 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private BufferedOutputStream out;
     private volatile boolean connected = true;
 
+    public void setConnection_id(int connection_id) {
+        this.connection_id = connection_id;
+    }
+
+    private int connection_id;
+
+
     public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
         this.encdec = reader;
