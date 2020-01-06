@@ -24,7 +24,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
             case "CONNECT":
                 String  loginuser= parse[3].split(":")[1];
                 String  pass= parse[4].split(":")[1];
-                Command connect = new CONNECT(loginuser,pass);
+                Command connect = new CONNECT(loginuser,pass,connections);
                 toSend = connect.execute();
                 connections.send(connectionId,toSend);
                 break;
@@ -32,7 +32,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String destination = parse[1].split(":")[1];
                 String id = parse[2].split(":")[1];
                 String receipt = parse[3].split(":")[1];
-                Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt));
+                Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt),connections);
                 toSend = subscribe.execute();
                 connections.send(destination,toSend);
                 break;
@@ -45,7 +45,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 break;
             case "DISCONNECT":
                 String receipt2 = parse[1].split(":")[1];
-                Command disconnect = new DISCONNECT(Integer.parseInt(receipt2));
+                Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),connections);
                 toSend = disconnect.execute();
                 connections.send(connectionId,toSend);
         }
