@@ -5,9 +5,11 @@ import bgu.spl.net.srv.Connections;
 import bgu.spl.net.srv.ConnectionsImpl;
 
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
+
     private int connectionId ;
     private ConnectionsImpl <String> connections;
     private boolean shouldTerminate;
+
     @Override
     public void start(int connectionId, Connections<String> connections) {
         this.connectionId = connectionId;
@@ -22,9 +24,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         String toSend;
         switch (opCode){
             case "CONNECT":
-                String  loginuser= parse[3].split(":")[1];
+                String  loginUser= parse[3].split(":")[1];
                 String  pass= parse[4].split(":")[1];
-                Command connect = new CONNECT(loginuser,pass,connections);
+                Command connect = new CONNECT(loginUser,pass,connections);
                 toSend = connect.execute();
                 connections.send(connectionId,toSend);
                 break;
@@ -40,7 +42,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String destination2 = parse[1].split(":")[1];
                 String body = parse[3];
                 Command send = new Send(destination2,body);
-                toSend = send.execute();
+                toSend = send.execute(); //TODO: ALON: wap
                 connections.send(destination2,toSend);
                 break;
             case "DISCONNECT":

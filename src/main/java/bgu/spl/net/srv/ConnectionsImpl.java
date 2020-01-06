@@ -8,13 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConnectionsImpl<T> implements Connections<T>
-{
+public class ConnectionsImpl<T> implements Connections<T>{
     HashMap <Integer,ConnectionHandler<T>> handlerMap ;
     HashMap <String,String> users ;
     HashMap <String,Boolean> activeUsers;
     ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<String,String>> > topicMap ;
     AtomicInteger messageId ;
+
+
     public ConnectionsImpl(){
         handlerMap = new HashMap <>();
         users = new HashMap<>();
@@ -55,8 +56,8 @@ public class ConnectionsImpl<T> implements Connections<T>
     public void send(String channel, T msg) {
 
     }
-    public int addhandler(ConnectionHandler<T> hanlder){
-        handlerMap.put(nextid,hanlder);
+    public int addHandler(ConnectionHandler<T> handler){
+        handlerMap.put(nextid,handler);
         nextid++;
         return nextid-1;
     }
