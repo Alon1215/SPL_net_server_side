@@ -23,10 +23,11 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private int connection_id;
 
 
-    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
+    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol,Integer connection_id) {
         this.sock = sock;
         this.encdec = reader;
         this.protocol = protocol;
+        this.connection_id = connection_id;
     }
 
     @Override
@@ -62,6 +63,6 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
     @Override
     public void send(T msg) {
-        //IMPLEMENT IF NEEDED
+
     }
 }

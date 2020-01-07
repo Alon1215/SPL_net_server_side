@@ -14,6 +14,7 @@ public abstract class BaseServer<T> implements Server<T> {
     private final Supplier<MessageEncoderDecoder<T>> encdecFactory;
     private ServerSocket sock;
     private ConnectionsImpl<T> connections= new ConnectionsImpl<>();
+    private int connectIdcount;
 
     public BaseServer(
             int port,
@@ -24,6 +25,7 @@ public abstract class BaseServer<T> implements Server<T> {
         this.protocolFactory = protocolFactory;
         this.encdecFactory = encdecFactory;
 		this.sock = null;
+		connectIdcount=0;
     }
 
     @Override
@@ -41,9 +43,9 @@ public abstract class BaseServer<T> implements Server<T> {
                 BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(
                         clientSock,
                         encdecFactory.get(),
-                        protocolFactory.get());
-                int id = connections.addHandler(handler);
-                handler.setConnection_id(id);
+                        protocolFactory.get(),connectIdcount);
+                connections.addHandler(handler,connectIdcount);
+                connectIdcount++;
                 execute(handler);
             }
 

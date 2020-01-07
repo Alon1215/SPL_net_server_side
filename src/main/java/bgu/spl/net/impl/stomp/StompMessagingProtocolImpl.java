@@ -10,7 +10,7 @@ import java.util.LinkedList;
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     private int connectionId ;
-    private ConnectionsImpl <String> connections;
+    private ConnectionsImpl  connections;
     private boolean shouldTerminate;
     private LinkedList<Pair<Integer,String>> myTopics; //
     private String activeUsername;
@@ -31,7 +31,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         return connectionId;
     }
 
-    public ConnectionsImpl<String> getConnections() {
+    public ConnectionsImpl getConnections() {
         return connections;
     }
 
@@ -95,8 +95,10 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt2 = parse[1].split(":")[1];
                 Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),this);
                 toSend = disconnect.execute();
+                connections.disconnect(connectionId);
                 connections.send(connectionId,toSend);
                 break;
+            default: //TODO: impl
         }
 
 

@@ -1,6 +1,10 @@
 package bgu.spl.net.impl.stomp;
 
 import bgu.spl.net.srv.ConnectionsImpl;
+import javafx.util.Pair;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DISCONNECT implements Command {
     private int receipt;
@@ -18,8 +22,11 @@ public class DISCONNECT implements Command {
            protocol.setShouldTerminate(true);   //TODO: check maybe we shouldnt throw error
            return e.execute();
        }
-
-
-        return null;
+        ConnectionsImpl connections = protocol.getConnections();
+        int connectId = protocol.getConnectionId();
+        for(Pair<Integer,String> topic :protocol.getMyTopics()){ //delete all subscriptions from topic map
+            connections.removeUserfromTopicmap(connectId,topic.getValue());
+        }
+        return "RECEIPT\n"+"receipt-id:"+receipt+"\n\n"+"\u0000";
     }
 }
