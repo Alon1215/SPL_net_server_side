@@ -33,10 +33,11 @@ public class Subscribe implements Command {
 
             }
         }
-        Pair pairToAdd = new Pair (id,destination);
+        //
+        Pair<Integer,String> pairToAdd = new Pair<> (protocol.getConnectionId(),destination);
         protocol.getMyTopics().push(pairToAdd); // add to users topic list
         protocol.getConnections().getTopicMap().putIfAbsent(destination,new ConcurrentLinkedQueue<>());
-        protocol.getConnections().getTopicMap().get(destination).add(pairToAdd);
+        protocol.getConnections().getTopicMap().get(destination).add(new Pair(protocol.getConnectionId(),id));
         return ("RECEIPT"+'\n'+"receipt-id:"+id+'\n'+'\n'+'\u0000');
 
     }

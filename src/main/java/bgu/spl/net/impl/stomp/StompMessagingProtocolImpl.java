@@ -10,7 +10,7 @@ import java.util.LinkedList;
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     private int connectionId ;
-    private ConnectionsImpl  connections;
+    private ConnectionsImpl<String>  connections;
     private boolean shouldTerminate;
     private LinkedList<Pair<Integer,String>> myTopics; //
     private String activeUsername;
@@ -31,7 +31,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         return connectionId;
     }
 
-    public ConnectionsImpl getConnections() {
+    public ConnectionsImpl<String> getConnections() {
         return connections;
     }
 
@@ -46,7 +46,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     @Override
     public void start(int connectionId, Connections<String> connections) {
         this.connectionId = connectionId;
-        this.connections = (ConnectionsImpl)connections;
+        this.connections = (ConnectionsImpl<String>)connections;
         shouldTerminate = false;
         myTopics = new LinkedList<>();
         activeUsername="default";
@@ -66,7 +66,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 connections.send(connectionId,toSend);
                 break;
 
-            case "Subscribe":
+            case "SUBSCRIBE":
                 String destination = parse[1].split(":")[1];
                 String id = parse[2].split(":")[1];
                 String receipt = parse[3].split(":")[1];
@@ -75,11 +75,11 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 connections.send(destination,toSend);
                 break;
 
-            case "Send":
+            case "SEND": //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
                 String destination2 = parse[1].split(":")[1];
                 String body = parse[3];
                 Command send = new Send(destination2,body,this);
-                toSend = send.execute(); //TODO: ALON: wap
+                toSend = send.execute();
                 connections.send(destination2,toSend);
                 break;
 
@@ -98,7 +98,11 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 connections.disconnect(connectionId);
                 connections.send(connectionId,toSend);
                 break;
-            default: //TODO: impl
+            default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
+                Error e = new Error("","message received",message,"Invalid message - unable to process");
+                break;
+
+
         }
 
 

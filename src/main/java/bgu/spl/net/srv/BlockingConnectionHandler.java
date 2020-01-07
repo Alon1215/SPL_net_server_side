@@ -42,10 +42,12 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                 T nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) {
                     T response = protocol.process(nextMessage);
-                    if (response != null) {
-                        out.write(encdec.encode(response));
-                        out.flush();
-                    }
+
+                    //TODO ALON: 7.1 not valid code for our ass
+//                    if (response != null) {
+//                        out.write(encdec.encode(response));
+//                        out.flush();
+//                    }
                 }
             }
 
@@ -63,6 +65,12 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
     @Override
     public void send(T msg) {
+        byte[] byteMsg = encdec.encode(msg);
+        try {
+            out.write(byteMsg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

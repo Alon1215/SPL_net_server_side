@@ -14,10 +14,10 @@ public class ConnectionsImpl<T> implements Connections<T>{
 
     //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
     //TODO: check if String or int is the right impl for them
-    private HashMap <Integer,ConnectionHandler<String>> handlerMap ;
-    private HashMap <String, java.lang.String> users ; // maps
+    private HashMap <Integer,ConnectionHandler<T>> handlerMap ;
+    private HashMap <String, String> users ; // maps
     private HashMap <String,Boolean> activeUsers;
-    private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>> > topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
+    private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>>> topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
     private AtomicInteger messageId ;
 
 
@@ -30,19 +30,19 @@ public class ConnectionsImpl<T> implements Connections<T>{
     }
 
 
-    public HashMap<Integer, ConnectionHandler<String>> getHandlerMap() {
+    public HashMap<Integer, ConnectionHandler<T>> getHandlerMap() {
         return handlerMap;
     }
 
-    public HashMap<java.lang.String, java.lang.String> getUsers() {
+    public HashMap<String, java.lang.String> getUsers() {
         return users;
     }
 
-    public HashMap<java.lang.String, Boolean> getActiveUsers() {
+    public HashMap<String, Boolean> getActiveUsers() {
         return activeUsers;
     }
 
-    public ConcurrentHashMap<java.lang.String, ConcurrentLinkedQueue<Pair<Integer, Integer>>> getTopicMap() {
+    public ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer, Integer>>> getTopicMap() {
         return topicMap;
     }
 
@@ -61,12 +61,12 @@ public class ConnectionsImpl<T> implements Connections<T>{
 
     @Override
     public void send(String channel, T msg) {
-        java.lang.String[] parser = ((String)msg).split("\n"); //TODO: check if OK to assume T is String / OK to change T to String in this ConnectionsImpl class
+        String[] parser = ((String)msg).split("\n"); //TODO: check if OK to assume T is String / OK to change T to String in this ConnectionsImpl class
         for (Pair<Integer,Integer> p : topicMap.get(channel) ){
-            ConnectionHandler<String> ch = handlerMap.get(p.getKey());
+            ConnectionHandler<T> ch = handlerMap.get(p.getKey());
             MessageEncoderDecoderImpl med = new MessageEncoderDecoderImpl();
             String toSend = parser[0]+"\n"+"subscription:"+p.getValue()+"\n"+parser[1]+"\n"+parser[2]+"\n\n"+parser[3]+"\n"+"\u0000";
-            send(p.getKey(),toSend);
+            send(p.getKey(), (T) toSend); //TODO: what the fack to do with T
         }
     }
     public void addHandler(ConnectionHandler handler,Integer connectionId){

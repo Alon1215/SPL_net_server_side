@@ -22,11 +22,16 @@ public class DISCONNECT implements Command {
            protocol.setShouldTerminate(true);   //TODO: check maybe we shouldnt throw error
            return e.execute();
        }
-        ConnectionsImpl connections = protocol.getConnections();
+        ConnectionsImpl<String> connections = protocol.getConnections();
         int connectId = protocol.getConnectionId();
         for(Pair<Integer,String> topic :protocol.getMyTopics()){ //delete all subscriptions from topic map
             connections.removeUserfromTopicmap(connectId,topic.getValue());
         }
+
+        protocol.getConnections().getActiveUsers().remove(protocol.getActiveUsername());
+        protocol.getConnections().getActiveUsers().put(protocol.getActiveUsername(),false);
+        protocol.setActiveUsername("default");
+        protocol.setShouldTerminate(true);
         return "RECEIPT\n"+"receipt-id:"+receipt+"\n\n"+"\u0000";
     }
 }

@@ -24,8 +24,8 @@ public class  MessageEncoderDecoderImpl implements MessageEncoderDecoder<String>
 
     @Override
     public byte[] encode(String message) {
-        return (message + "\u0000").getBytes(); //uses utf8 by default
-    }
+        return (message).getBytes(); //uses utf8 by default
+    } //TODO: ALON 7.1 20:00 why are we adding "\u0000" ?
 
 
     private void pushByte(byte nextByte) {
@@ -33,7 +33,7 @@ public class  MessageEncoderDecoderImpl implements MessageEncoderDecoder<String>
             bytes = Arrays.copyOf(bytes, len * 2);
         }
 
-        bytes[len++] = nextByte;
+        bytes[ len ++ ] = nextByte;
     }
 
     private String popString() {
