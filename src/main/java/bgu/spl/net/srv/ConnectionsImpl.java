@@ -13,11 +13,11 @@ public class ConnectionsImpl<T> implements Connections<T>{
 
     //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
     //TODO: check if String or int is the right impl for them
-    HashMap <Integer,ConnectionHandler<T>> handlerMap ;
-    HashMap <String,String> users ;
-    HashMap <String,Boolean> activeUsers;
-    ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>> > topicMap ; //1st = my id , 2nd = sub's id (important)
-    AtomicInteger messageId ;
+    private HashMap <Integer,ConnectionHandler<T>> handlerMap ;
+    private HashMap <String,String> users ; // maps
+    private HashMap <String,Boolean> activeUsers;
+    private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>> > topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
+    private AtomicInteger messageId ;
 
 
     public ConnectionsImpl(){
@@ -75,5 +75,16 @@ public class ConnectionsImpl<T> implements Connections<T>{
     @Override
     public void disconnect(int connectionId) {
 
+    }
+    public boolean removeUserfromTopicmap(int connectionId,String genre){
+        ConcurrentLinkedQueue<Pair<Integer,Integer>> subscribers =topicMap.get(genre);
+        for(Pair <Integer,Integer> p:subscribers){ //find subscription pair in the topics queue, and remove it
+            if(p.getKey() == connectionId){
+                subscribers.remove(p);
+                System.out.println("removed subscriber pair from TopicMap queue"); //TODO:print for us, maybe remove later
+                return true;
+            }
+        }
+        return false;
     }
 }

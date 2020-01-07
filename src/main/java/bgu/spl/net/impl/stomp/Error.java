@@ -1,7 +1,7 @@
 package bgu.spl.net.impl.stomp;
 
 public class Error implements Command {
-    private int receipt_id;
+    private String receipt_id;
     private String message;
     private String messageText;
     private String details;
@@ -16,7 +16,7 @@ public class Error implements Command {
      */
 
 
-    public Error(int receipt_id, String message, String messageText, String details) {
+    public Error(String receipt_id, String message, String messageText, String details) {
         this.receipt_id = receipt_id;
         this.message = message;
         this.messageText = messageText;

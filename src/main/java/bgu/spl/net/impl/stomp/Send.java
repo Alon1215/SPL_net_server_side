@@ -5,19 +5,20 @@ import bgu.spl.net.srv.ConnectionsImpl;
 public class Send implements Command {
     private String destination;
     private String body;
-    private ConnectionsImpl<?> connections;
+    private StompMessagingProtocolImpl protocol;
 
-    public Send(String destination, String body) {
+    public Send(String destination, String body,StompMessagingProtocolImpl protocol) {
         this.destination = destination;
         this.body = body;
+        this.protocol = protocol;
     }
 
     @Override
     public String execute() {
         return
-                "SEND\n" +
-                "destination:" + destination + "\n\n" +
-                body + "\n" +
-                "^@";
+                "MESSAGE\n" +
+                "Message-id:" + protocol.getConnections().getMessageId() + "\n" + "destination:"+destination+"\n\n"+ //TODO: ofer:changed send Frame to Message frame, check if message id should be added here
+                body + "\n" +                                                                                        //TODO: need to add sub's id for each user when sending to him in connectionsImpl
+                "\u0000";
     }
 }
