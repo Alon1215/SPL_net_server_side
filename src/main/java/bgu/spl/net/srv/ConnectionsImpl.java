@@ -3,16 +3,20 @@ package bgu.spl.net.srv;
 import javafx.util.Pair;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+
 public class ConnectionsImpl<T> implements Connections<T>{
+
+    //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
+    //TODO: check if String or int is the right impl for them
     HashMap <Integer,ConnectionHandler<T>> handlerMap ;
     HashMap <String,String> users ;
     HashMap <String,Boolean> activeUsers;
-    ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<String,String>> > topicMap ;
+    ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>> > topicMap ; //1st = my id , 2nd = sub's id (important)
     AtomicInteger messageId ;
 
 
@@ -38,7 +42,7 @@ public class ConnectionsImpl<T> implements Connections<T>{
         return activeUsers;
     }
 
-    public ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<String, String>>> getTopicMap() {
+    public ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer, Integer>>> getTopicMap() {
         return topicMap;
     }
 
@@ -49,11 +53,17 @@ public class ConnectionsImpl<T> implements Connections<T>{
 
     @Override
     public boolean send(int connectionId, T msg) {
+
+
+
         return false;
     }
 
     @Override
     public void send(String channel, T msg) {
+        for (Pair<Integer,Integer> idToSubId : topicMap.get(channel) ){
+
+        }
 
     }
     public int addHandler(ConnectionHandler<T> handler){
