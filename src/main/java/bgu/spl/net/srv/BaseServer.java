@@ -41,11 +41,13 @@ public  class BaseServer<T> implements Server<T> {
             while (!Thread.currentThread().isInterrupted()) {
 
                 Socket clientSock = serverSock.accept();
+                System.out.println("connection established");
 
                 BlockingConnectionHandler<T> handler = new BlockingConnectionHandler(
                         clientSock,
                         encdecFactory.get(),
                         protocolFactory.get(),connectIdcount,connections);
+                System.out.println("created hander with connect id "+ connectIdcount);
                 //our added impl:
                 connections.addHandler(handler,connectIdcount);
                 connectIdcount++;
@@ -65,6 +67,7 @@ public  class BaseServer<T> implements Server<T> {
     }
 
     protected  void execute(BlockingConnectionHandler<T>  handler){
+        new Thread(handler).start();
 
     }
 

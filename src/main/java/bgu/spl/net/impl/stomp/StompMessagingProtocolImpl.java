@@ -62,7 +62,8 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public void process(String message) {
-        String [] parse = message.split(" ");
+        System.out.println("inside proccess!");
+        String [] parse = message.split("\n");
         String opCode= parse[0];
         String toSend;
         switch (opCode){
@@ -108,6 +109,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 break;
             default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
                 Error e = new Error("","message received",message,"Invalid message - unable to process");
+                connections.send(connectionId,e.execute());
                 break;
 
 

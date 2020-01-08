@@ -3,6 +3,7 @@ package bgu.spl.net.srv;
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
 import bgu.spl.net.api.StompMessagingProtocol;
+import bgu.spl.net.impl.stomp.StompMessagingProtocolImpl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,7 +12,7 @@ import java.net.Socket;
 
 public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler<T> {
 
-    private final StompMessagingProtocol protocol;
+    private final StompMessagingProtocolImpl protocol;
     private final MessageEncoderDecoder<String> encdec;
     private final Socket sock;
     private BufferedInputStream in;
@@ -31,7 +32,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<String> reader, StompMessagingProtocol protocol, Integer connection_id,Connections<T> connections) {
         this.sock = sock;
         this.encdec = reader;
-        this.protocol = protocol;
+        this.protocol = (StompMessagingProtocolImpl)protocol;
         this.connection_id = connection_id;
         this.connections = connections;
     }
@@ -39,15 +40,19 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     @Override
     public void run() {
         protocol.start(connection_id,(Connections<String>) connections); //TODO: check if cast is ok
+        System.out.println("i am a running hander number"+ connection_id);
         try (Socket sock = this.sock) { //just for automatic closing
             int read;
             in = new BufferedInputStream(sock.getInputStream());
             out = new BufferedOutputStream(sock.getOutputStream());
-
+            System.out.println("inside try");
             while (!protocol.shouldTerminate() && connected && (read = in.read()) >= 0) {
+                System.out.println("inside reading message");
                 String nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) {
+                    System.out.println("message read, now begin process");
                     protocol.process(nextMessage);
+
 
                     //TODO ALON: 7.1 not valid code for our ass
 //                    if (response != null) {
@@ -56,10 +61,12 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 //                    }
                 }
             }
+            close();
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
 
     }
 
