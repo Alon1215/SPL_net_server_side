@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 
-public  class BaseServer<T> implements Server<T> {
+public abstract class BaseServer<T> implements Server<T> {
 
     private final int port;
     private final Supplier<StompMessagingProtocol> protocolFactory;
@@ -66,9 +66,11 @@ public  class BaseServer<T> implements Server<T> {
 			sock.close();
     }
 
-    protected  void execute(BlockingConnectionHandler<T>  handler){
-        new Thread(handler).start();
+    protected abstract void execute(BlockingConnectionHandler<T>  handler);
 
-    }
+//    {
+//        new Thread(handler).start();
+//
+//    }
 
 }
