@@ -43,6 +43,14 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         return myTopics;
     }
 
+//    public StompMessagingProtocolImpl(int connectionId, ConnectionsImpl<String> connections) {
+//        this.connectionId = connectionId;
+//        this.connections = connections;
+//        this.shouldTerminate = false;
+//        this.myTopics = new LinkedList<>();
+//        this.activeUsername = de;
+//    }
+
     @Override
     public void start(int connectionId, Connections<String> connections) {
         this.connectionId = connectionId;

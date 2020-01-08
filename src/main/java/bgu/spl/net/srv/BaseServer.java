@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 
-public abstract class BaseServer<T> implements Server<T> {
+public  class BaseServer<T> implements Server<T> {
 
     private final int port;
     private final Supplier<StompMessagingProtocol> protocolFactory;
@@ -42,10 +42,10 @@ public abstract class BaseServer<T> implements Server<T> {
 
                 Socket clientSock = serverSock.accept();
 
-                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(
+                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler(
                         clientSock,
                         encdecFactory.get(),
-                        protocolFactory.get(),connectIdcount);
+                        protocolFactory.get(),connectIdcount,connections);
                 //our added impl:
                 connections.addHandler(handler,connectIdcount);
                 connectIdcount++;
@@ -64,6 +64,8 @@ public abstract class BaseServer<T> implements Server<T> {
 			sock.close();
     }
 
-    protected abstract void execute(BlockingConnectionHandler<T>  handler);
+    protected  void execute(BlockingConnectionHandler<T>  handler){
+
+    }
 
 }
