@@ -39,7 +39,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     public boolean isShouldTerminate() {
         return shouldTerminate;
-    }
+    } //TODO: ALON 13.1 1920 found duplication of function, delete THIS one
 
     public LinkedList<Pair<Integer, String>> getMyTopics() {
         return myTopics;
@@ -75,19 +75,17 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 Command connect = new CONNECT(loginUser,pass,this);
                 toSend = connect.execute();
                 connections.send(connectionId,toSend);
-
-
                 break;
 
-            case "SUBSCRIBE":
+            case "SUBSCRIBE": {
                 String destination = parse[1].split(":")[1];
                 String id = parse[2].split(":")[1];
                 String receipt = parse[3].split(":")[1];
-                Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt),this);
+                Command subscribe = new Subscribe(destination, Integer.parseInt(id), Integer.parseInt(receipt), this);
                 toSend = subscribe.execute();
-                connections.send(destination,toSend);
+                connections.send(destination, toSend);
                 break;
-
+            }
             case "SEND": //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
                 String destination2 = parse[1].split(":")[1];
                 String body = parse[3];
@@ -96,25 +94,27 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 connections.send(destination2,toSend);
                 break;
 
-            case "UNSUBSCRIBE":
-                String subs_id =  parse[1].split(":")[1];
-                Command unsubscribe = new Unsubscribe(subs_id,this);
+            case "UNSUBSCRIBE": {
+                String subs_id = parse[1].split(":")[1];
+                String receipt = parse[2].split(":")[1]; //TODO:: make sure it all good with the location
+                Command unsubscribe = new Unsubscribe(subs_id, this,Integer.parseInt(receipt));
                 toSend = unsubscribe.execute();
-                connections.send(connectionId,toSend);
+                connections.send(connectionId, toSend);
                 break;
-
+            }
             case "DISCONNECT":
                 shouldTerminate=true;
                 String receipt2 = parse[1].split(":")[1];
                 Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),this);
                 toSend = disconnect.execute();
-                connections.disconnect(connectionId); //TODO: Ofer: check if ok
                 connections.send(connectionId, toSend);
+                connections.disconnect(connectionId); //
 
                 break;
             default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
-                Error e = new Error("","message received",message,"Invalid message - unable to process");
+                Error e = new Error("","message received",message,"Invalid message - unable to process",this);
                 connections.send(connectionId,e.execute());
+               // connections.disconnect(connectionId); //TODO: make sure this is not needed (because happens in main)
                 break;
 
 

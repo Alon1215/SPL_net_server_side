@@ -21,16 +21,13 @@ public class Subscribe implements Command {
     @Override
     public String execute() {
         if(protocol.getActiveUsername().compareTo("default")==0){
-            Error e = new Error(""+receipt,"user is not logged in","","no user is logged in,please log in before subscribing to genere "+destination );
+            Error e = new Error(""+receipt,"user is not logged in","","no user is logged in,please log in before subscribing to genere "+destination,protocol );
             protocol.setShouldTerminate(true);
             return e.execute();
         }
         for(Pair<Integer,String> p:protocol.getMyTopics()){
             if(p.getValue().compareTo(destination)==0){
-                Error e= new Error(""+receipt,"user already subscribed","","user "+protocol.getActiveUsername()+" tried to subscribe to genre "+ destination + " but already subscribed");
-                protocol.setShouldTerminate(true);
-                return e.execute();
-
+                return ("RECEIPT"+'\n'+"receipt-id:"+id+'\n'+'\n'+'\u0000');
             }
         }
         //

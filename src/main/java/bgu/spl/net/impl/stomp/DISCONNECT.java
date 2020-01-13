@@ -18,8 +18,8 @@ public class DISCONNECT implements Command {
     @Override
     public String execute() {
         if(protocol.getActiveUsername().compareTo("default")==0){
-           Error e = new Error("","user is not logged in","","tried to logout but no user is logged in " );
-           protocol.setShouldTerminate(true);   //TODO: check maybe we shouldnt throw error
+           Error e = new Error("","user is not logged in","","tried to logout but no user is logged in " ,protocol);
+            protocol.getConnections().disconnect(protocol.getConnectionId());
            return e.execute();
        }
         ConnectionsImpl connections = protocol.getConnections();
