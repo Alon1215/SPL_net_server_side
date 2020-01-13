@@ -11,6 +11,8 @@ public class StompServer {
                () -> new StompMessagingProtocolImpl(), //protocol factory
                 ()-> new MessageEncoderDecoderImpl() //message encoder decoder factory
         ).serve();
+        //Server.reactor(4,7777,() -> new StompMessagingProtocolImpl(),  ()-> new MessageEncoderDecoderImpl()).serve();
+
 
     }
 

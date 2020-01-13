@@ -15,11 +15,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     private boolean shouldTerminate;
     private LinkedList<Pair<Integer,String>> myTopics; //
     private String activeUsername;
-    private char type='d';
 
-    public void setType(char type) {
-        this.type = type;
-    }
 
     public String getActiveUsername() {
         return activeUsername;
@@ -64,10 +60,6 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         shouldTerminate = false;
         myTopics = new LinkedList<>();
         activeUsername="default";
-        if(getConnections().getHandlerMap().get(connectionId) instanceof NonBlockingConnectionHandler) //TODO:check if ok
-            type = 'r';
-        else
-            type='t';
     }
 
     @Override
@@ -82,9 +74,8 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String  pass= parse[4].split(":")[1];
                 Command connect = new CONNECT(loginUser,pass,this);
                 toSend = connect.execute();
-                if(type == 't')
-                    connections.send(connectionId,toSend);
-                else
+                connections.send(connectionId,toSend);
+
 
                 break;
 
@@ -94,8 +85,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt = parse[3].split(":")[1];
                 Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt),this);
                 toSend = subscribe.execute();
-                if(type == 't')
-                    connections.send(destination,toSend);
+                connections.send(destination,toSend);
                 break;
 
             case "SEND": //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
@@ -103,16 +93,14 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String body = parse[3];
                 Command send = new Send(destination2,body,this);
                 toSend = send.execute();
-                if(type == 't')
-                    connections.send(destination2,toSend);
+                connections.send(destination2,toSend);
                 break;
 
             case "UNSUBSCRIBE":
                 String subs_id =  parse[1].split(":")[1];
                 Command unsubscribe = new Unsubscribe(subs_id,this);
                 toSend = unsubscribe.execute();
-                if(type == 't')
-                    connections.send(connectionId,toSend);
+                connections.send(connectionId,toSend);
                 break;
 
             case "DISCONNECT":
@@ -120,15 +108,13 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt2 = parse[1].split(":")[1];
                 Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),this);
                 toSend = disconnect.execute();
-                if(type == 't') {
-                    connections.disconnect(connectionId); //TODO: Ofer: check if ok
-                    connections.send(connectionId, toSend);
-                }
+                connections.disconnect(connectionId); //TODO: Ofer: check if ok
+                connections.send(connectionId, toSend);
+
                 break;
             default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
                 Error e = new Error("","message received",message,"Invalid message - unable to process");
-                if(type == 't')
-                    connections.send(connectionId,e.execute());
+                connections.send(connectionId,e.execute());
                 break;
 
 

@@ -21,7 +21,6 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<St
     private int connection_id;
     private Connections<String> connections;
 
-
     public void setConnection_id(int connection_id) {
         this.connection_id = connection_id;
     }
@@ -32,7 +31,7 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<St
     public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<String> reader, StompMessagingProtocol protocol, Integer connection_id,Connections<String> connections) {
         this.sock = sock;
         this.encdec = reader;
-        this.protocol = (StompMessagingProtocolImpl)protocol;
+        this.protocol = protocol;
         this.connection_id = connection_id;
         this.connections = connections;
     }
@@ -45,23 +44,18 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<St
             int read;
             in = new BufferedInputStream(sock.getInputStream());
             out = new BufferedOutputStream(sock.getOutputStream());
-            System.out.println("inside try");
+            System.out.println("inside try:");
             while (!protocol.shouldTerminate() && connected && (read = in.read()) >= 0) {
-                System.out.println("inside reading message");
                 String nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) {
                     System.out.println("message read, now begin process");
                     protocol.process(nextMessage);
-
-
-                    //TODO ALON: 7.1 not valid code for our ass
-//                    if (response != null) {
-//                        out.write(encdec.encode(response));
-//                        out.flush();
-//                    }
                 }
             }
+            connections.disconnect(connection_id);
+            //protocol.
             close();
+
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -78,7 +72,7 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<St
 
     @Override
     public void send(String msg) {
-        byte[] byteMsg = encdec.encode((String)msg);
+        byte[] byteMsg = encdec.encode(msg);
         try {
             out.write(byteMsg);
             out.flush();

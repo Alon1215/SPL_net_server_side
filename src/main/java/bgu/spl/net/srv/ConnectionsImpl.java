@@ -14,9 +14,9 @@ public class ConnectionsImpl implements Connections<String>{
 
     //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
     //TODO: check if String or int is the right impl for them
-    private ConcurrentHashMap <Integer,ConnectionHandler<String>> handlerMap ;
-    private ConcurrentHashMap <String, String> users ; // maps
-    private ConcurrentHashMap <String,Boolean> activeUsers;
+    private ConcurrentHashMap <Integer,ConnectionHandler<String>> handlerMap ; // 1st = connection id,  2nd = connection handle
+    private ConcurrentHashMap <String, String> users ; // 1st = userName , 2nd = password
+    private ConcurrentHashMap <String,Boolean> activeUsers; // 1st = userName , 2nd = isActive
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>>> topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
     private AtomicInteger messageId ;
 
