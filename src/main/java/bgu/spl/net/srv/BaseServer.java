@@ -9,19 +9,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 
-public  class BaseServer<T> implements Server<T> {
+public abstract class BaseServer<T> implements Server<T> {
 
     private final int port;
     private final Supplier<StompMessagingProtocol> protocolFactory;
-    private final Supplier<MessageEncoderDecoder<T>> encdecFactory;
+    private final Supplier<MessageEncoderDecoder<String>> encdecFactory;
     private ServerSocket sock;
-    private ConnectionsImpl<T> connections= new ConnectionsImpl<>();
+    private ConnectionsImpl connections= new ConnectionsImpl();
     private int connectIdcount;
 
     public BaseServer(
             int port,
             Supplier<StompMessagingProtocol> protocolFactory,
-            Supplier<MessageEncoderDecoder<T>> encdecFactory) {
+            Supplier<MessageEncoderDecoder<String>> encdecFactory) {
 
         this.port = port;
         this.protocolFactory = protocolFactory;
@@ -43,7 +43,7 @@ public  class BaseServer<T> implements Server<T> {
                 Socket clientSock = serverSock.accept();
                 System.out.println("connection established");
 
-                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler(
+                BlockingConnectionHandler handler = new BlockingConnectionHandler(
                         clientSock,
                         encdecFactory.get(),
                         protocolFactory.get(),connectIdcount,connections);
@@ -53,6 +53,7 @@ public  class BaseServer<T> implements Server<T> {
                 connectIdcount++;
                 execute(handler);
             }
+            close();
 
         } catch (IOException ex) {
         }
@@ -60,15 +61,15 @@ public  class BaseServer<T> implements Server<T> {
         System.out.println("server closed!!!");
     }
 
+    protected abstract void execute(BlockingConnectionHandler handler);
+
     @Override
     public void close() throws IOException {
 		if (sock != null)
 			sock.close();
     }
 
-    protected  void execute(BlockingConnectionHandler<T>  handler){
-        new Thread(handler).start();
+ 
 
-    }
 
 }

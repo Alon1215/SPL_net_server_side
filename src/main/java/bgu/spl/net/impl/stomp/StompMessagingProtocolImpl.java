@@ -3,6 +3,7 @@ package bgu.spl.net.impl.stomp;
 import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.srv.Connections;
 import bgu.spl.net.srv.ConnectionsImpl;
+import bgu.spl.net.srv.NonBlockingConnectionHandler;
 import javafx.util.Pair;
 
 import java.util.LinkedList;
@@ -10,10 +11,15 @@ import java.util.LinkedList;
 public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     private int connectionId ;
-    private ConnectionsImpl<String>  connections;
+    private ConnectionsImpl  connections;
     private boolean shouldTerminate;
     private LinkedList<Pair<Integer,String>> myTopics; //
     private String activeUsername;
+    private char type='d';
+
+    public void setType(char type) {
+        this.type = type;
+    }
 
     public String getActiveUsername() {
         return activeUsername;
@@ -31,7 +37,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
         return connectionId;
     }
 
-    public ConnectionsImpl<String> getConnections() {
+    public ConnectionsImpl getConnections() {
         return connections;
     }
 
@@ -54,10 +60,14 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     @Override
     public void start(int connectionId, Connections<String> connections) {
         this.connectionId = connectionId;
-        this.connections = (ConnectionsImpl<String>)connections;
+        this.connections = (ConnectionsImpl)connections;
         shouldTerminate = false;
         myTopics = new LinkedList<>();
         activeUsername="default";
+        if(getConnections().getHandlerMap().get(connectionId) instanceof NonBlockingConnectionHandler) //TODO:check if ok
+            type = 'r';
+        else
+            type='t';
     }
 
     @Override
@@ -72,7 +82,10 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String  pass= parse[4].split(":")[1];
                 Command connect = new CONNECT(loginUser,pass,this);
                 toSend = connect.execute();
-                connections.send(connectionId,toSend);
+                if(type == 't')
+                    connections.send(connectionId,toSend);
+                else
+
                 break;
 
             case "SUBSCRIBE":
@@ -81,7 +94,8 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt = parse[3].split(":")[1];
                 Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt),this);
                 toSend = subscribe.execute();
-                connections.send(destination,toSend);
+                if(type == 't')
+                    connections.send(destination,toSend);
                 break;
 
             case "SEND": //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
@@ -89,14 +103,16 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String body = parse[3];
                 Command send = new Send(destination2,body,this);
                 toSend = send.execute();
-                connections.send(destination2,toSend);
+                if(type == 't')
+                    connections.send(destination2,toSend);
                 break;
 
             case "UNSUBSCRIBE":
                 String subs_id =  parse[1].split(":")[1];
                 Command unsubscribe = new Unsubscribe(subs_id,this);
                 toSend = unsubscribe.execute();
-                connections.send(connectionId,toSend);
+                if(type == 't')
+                    connections.send(connectionId,toSend);
                 break;
 
             case "DISCONNECT":
@@ -104,12 +120,15 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt2 = parse[1].split(":")[1];
                 Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),this);
                 toSend = disconnect.execute();
-                connections.disconnect(connectionId);
-                connections.send(connectionId,toSend);
+                if(type == 't') {
+                    connections.disconnect(connectionId); //TODO: Ofer: check if ok
+                    connections.send(connectionId, toSend);
+                }
                 break;
             default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
                 Error e = new Error("","message received",message,"Invalid message - unable to process");
-                connections.send(connectionId,e.execute());
+                if(type == 't')
+                    connections.send(connectionId,e.execute());
                 break;
 
 

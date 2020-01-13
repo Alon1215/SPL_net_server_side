@@ -10,35 +10,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 
-public class ConnectionsImpl<T> implements Connections<T>{
+public class ConnectionsImpl implements Connections<String>{
 
     //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
     //TODO: check if String or int is the right impl for them
-    private HashMap <Integer,ConnectionHandler<T>> handlerMap ;
-    private HashMap <String, String> users ; // maps
-    private HashMap <String,Boolean> activeUsers;
+    private ConcurrentHashMap <Integer,ConnectionHandler<String>> handlerMap ;
+    private ConcurrentHashMap <String, String> users ; // maps
+    private ConcurrentHashMap <String,Boolean> activeUsers;
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>>> topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
     private AtomicInteger messageId ;
 
 
     public ConnectionsImpl(){
-        handlerMap = new HashMap <>();
-        users = new HashMap<>();
-        activeUsers = new HashMap<>();
+        handlerMap = new ConcurrentHashMap<>();
+        users = new ConcurrentHashMap<>();
+        activeUsers = new ConcurrentHashMap<>();
         topicMap = new ConcurrentHashMap<>();
         messageId = new AtomicInteger(0);
     }
 
 
-    public HashMap<Integer, ConnectionHandler<T>> getHandlerMap() {
+    public ConcurrentHashMap<Integer, ConnectionHandler<String>> getHandlerMap() {
         return handlerMap;
     }
 
-    public HashMap<String, java.lang.String> getUsers() {
+    public ConcurrentHashMap<String, String> getUsers() {
         return users;
     }
 
-    public HashMap<String, Boolean> getActiveUsers() {
+    public ConcurrentHashMap<String, Boolean> getActiveUsers() {
         return activeUsers;
     }
 
@@ -52,7 +52,7 @@ public class ConnectionsImpl<T> implements Connections<T>{
 
 
     @Override
-    public boolean send(int connectionId, T msg) {
+    public boolean send(int connectionId, String msg) {
         if(!handlerMap.containsKey(connectionId))
             return false;
         handlerMap.get(connectionId).send(msg);
@@ -60,13 +60,11 @@ public class ConnectionsImpl<T> implements Connections<T>{
     }
 
     @Override
-    public void send(String channel, T msg) {
-        String[] parser = ((String)msg).split("\n"); //TODO: check if OK to assume T is String / OK to change T to String in this ConnectionsImpl class
+    public void send(String channel, String msg) {
+        String[] parser = msg.split("\n"); //
         for (Pair<Integer,Integer> p : topicMap.get(channel) ){
-            ConnectionHandler<T> ch = handlerMap.get(p.getKey());
-            MessageEncoderDecoderImpl med = new MessageEncoderDecoderImpl();
-            String toSend = parser[0]+"\n"+"subscription:"+p.getValue()+"\n"+parser[1]+"\n"+parser[2]+"\n\n"+parser[3]+"\n"+"\u0000";
-            send(p.getKey(), (T) toSend); //TODO: what the fack to do with T
+            String toSend = parser[0]+"\n"+"subscription:"+p.getValue()+"\n"+parser[1]+"\n"+parser[2]+"\n\n"+parser[3]+"\n"+"\u0000"; //make personal msg with sub's id
+            send(p.getKey(),  toSend); // send using send method by connectId
         }
     }
     public void addHandler(ConnectionHandler handler,Integer connectionId){

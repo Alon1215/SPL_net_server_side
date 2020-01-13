@@ -10,16 +10,16 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler<T> {
+public class BlockingConnectionHandler implements Runnable, ConnectionHandler<String> {
 
-    private final StompMessagingProtocolImpl protocol;
+    private final StompMessagingProtocol protocol;
     private final MessageEncoderDecoder<String> encdec;
     private final Socket sock;
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
     private int connection_id;
-    private Connections<T> connections;
+    private Connections<String> connections;
 
 
     public void setConnection_id(int connection_id) {
@@ -29,7 +29,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
 
 
-    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<String> reader, StompMessagingProtocol protocol, Integer connection_id,Connections<T> connections) {
+    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<String> reader, StompMessagingProtocol protocol, Integer connection_id,Connections<String> connections) {
         this.sock = sock;
         this.encdec = reader;
         this.protocol = (StompMessagingProtocolImpl)protocol;
@@ -39,7 +39,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
     @Override
     public void run() {
-        protocol.start(connection_id,(Connections<String>) connections); //TODO: check if cast is ok
+        protocol.start(connection_id, connections); //TODO: check if cast is ok
         System.out.println("i am a running hander number"+ connection_id);
         try (Socket sock = this.sock) { //just for automatic closing
             int read;
@@ -77,7 +77,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     }
 
     @Override
-    public void send(T msg) {
+    public void send(String msg) {
         byte[] byteMsg = encdec.encode((String)msg);
         try {
             out.write(byteMsg);

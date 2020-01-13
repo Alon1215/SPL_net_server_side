@@ -22,7 +22,7 @@ public class DISCONNECT implements Command {
            protocol.setShouldTerminate(true);   //TODO: check maybe we shouldnt throw error
            return e.execute();
        }
-        ConnectionsImpl<String> connections = protocol.getConnections();
+        ConnectionsImpl connections = protocol.getConnections();
         int connectId = protocol.getConnectionId();
         for(Pair<Integer,String> topic :protocol.getMyTopics()){ //delete all subscriptions from topic map
             connections.removeUserfromTopicmap(connectId,topic.getValue());

@@ -16,7 +16,7 @@ public class CONNECT implements Command {
     @Override
     public String execute() {
         String output;
-        ConnectionsImpl<String> connections = this.protocol.getConnections();
+        ConnectionsImpl connections = this.protocol.getConnections();
         if(!connections.getUsers().containsKey(loginUser)){
             connections.getUsers().put(loginUser,passcode); //add new user to map
             connections.getActiveUsers().put(loginUser,true);
