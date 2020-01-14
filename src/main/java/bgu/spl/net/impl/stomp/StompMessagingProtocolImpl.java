@@ -98,9 +98,9 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 break;
             }
             case "UNSUBSCRIBE": {
-                System.out.println("proccesing msg of type Unsubscribe");
                 String subs_id = parse[1].split(":")[1];
-                Command unsubscribe = new Unsubscribe(subs_id, this);
+                String receipt = parse[2].split(":")[1]; //TODO:: make sure it all good with the location
+                Command unsubscribe = new Unsubscribe(subs_id, this,Integer.parseInt(receipt));
                 toSend = unsubscribe.execute();
                 connections.send(connectionId, toSend);
                 break;
