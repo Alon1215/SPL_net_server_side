@@ -53,8 +53,7 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<St
                 }
             }
             connections.disconnect(connection_id);
-            //protocol.
-            close();
+
 
 
         } catch (IOException ex) {

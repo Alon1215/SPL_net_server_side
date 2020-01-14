@@ -15,6 +15,7 @@ public class ConnectionsImpl implements Connections<String>{
     //TODO: ALON 7.1 1100: can you add description to each field? what is the pair & key/value?
     //TODO: check if String or int is the right impl for them
     private ConcurrentHashMap <Integer,ConnectionHandler<String>> handlerMap ; // 1st = connection id,  2nd = connection handle
+    private ConcurrentHashMap <Integer,String> connectIdtoNameMap; //1st = connectId, 2nd = UserName
     private ConcurrentHashMap <String, String> users ; // 1st = userName , 2nd = password
     private ConcurrentHashMap <String,Boolean> activeUsers; // 1st = userName , 2nd = isActive
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Pair<Integer,Integer>>> topicMap ; //maps Topic to: queue of pairs: <1st = connection id , 2nd = sub's id> (important)
@@ -27,6 +28,7 @@ public class ConnectionsImpl implements Connections<String>{
         activeUsers = new ConcurrentHashMap<>();
         topicMap = new ConcurrentHashMap<>();
         messageId = new AtomicInteger(0);
+        connectIdtoNameMap = new ConcurrentHashMap<>();
     }
 
 
@@ -73,9 +75,22 @@ public class ConnectionsImpl implements Connections<String>{
 
     @Override
     public void disconnect(int connectionId) {
+        if(connectIdtoNameMap.contains(connectionId)) {
+            String user_to_log_out = connectIdtoNameMap.get(connectionId);
+            if (activeUsers.contains(user_to_log_out))
+                activeUsers.replace(user_to_log_out, false);
+            if (activeUsers.contains(user_to_log_out)) {
+                activeUsers.replace(user_to_log_out, false);
+            }
+        }
         handlerMap.remove(connectionId);
 
     }
+
+    public ConcurrentHashMap<Integer, String> getConnectIdtoNameMap() {
+        return connectIdtoNameMap;
+    }
+
     public boolean removeUserfromTopicmap(int connectionId, String genre){
         ConcurrentLinkedQueue<Pair<Integer,Integer>> subscribers =topicMap.get(genre);
         for(Pair <Integer,Integer> p:subscribers){ //find subscription pair in the topics queue, and remove it
