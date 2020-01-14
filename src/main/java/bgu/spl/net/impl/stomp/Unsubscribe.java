@@ -36,13 +36,6 @@ public class Unsubscribe implements Command {
                 return e.execute();
       }
 
-//        ConcurrentLinkedQueue<Pair<Integer,Integer>> subscribers = protocol.getConnections().getTopicMap().get(toRemove.getValue());
-//        for(Pair <Integer,Integer> p:subscribers){ //find subscription pair in the topics queue, and remove it
-//            if(p.getKey() == protocol.getConnectionId()){
-//                subscribers.remove(p);
-//                System.out.println("removed subscriber pair from TopicMap queue"); //TODO:print for us, maybe remove later
-//            }
-//        }
         protocol.getConnections().removeUserfromTopicmap(protocol.getConnectionId(),(String)toRemove.getValue()); //find subscription pair in the topics queue, and remove it
         topics.remove(toRemove); //remove subscription pair from user's topic list
         return "Subscription number" + subscriptionId+ "Successfully removed" +'\n'+'\n'+'\u0000'; //TODO:: check if this Frame is ok because instructions don't say what to return

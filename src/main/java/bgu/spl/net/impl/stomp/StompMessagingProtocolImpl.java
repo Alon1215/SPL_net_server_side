@@ -64,60 +64,62 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public void process(String message) {
-        System.out.println("inside proccess!");
+        System.out.println("inside proccess! "+message);
         String [] parse = message.split("\n");
         String opCode= parse[0];
         String toSend;
         switch (opCode){
-            case "CONNECT":
-                String  loginUser= parse[3].split(":")[1];
-                String  pass= parse[4].split(":")[1];
-                Command connect = new CONNECT(loginUser,pass,this);
+            case "CONNECT": {
+                System.out.println("proccesing msg of type CONNECT");
+                String loginUser = parse[3].split(":")[1];
+                String pass = parse[4].split(":")[1];
+                Command connect = new CONNECT(loginUser, pass, this);
                 toSend = connect.execute();
-                connections.send(connectionId,toSend);
-
-
+                connections.send(connectionId, toSend);
                 break;
-
-            case "SUBSCRIBE":
+            }
+            case "SUBSCRIBE": {
+                System.out.println("proccesing msg of type Subscribe");
                 String destination = parse[1].split(":")[1];
                 String id = parse[2].split(":")[1];
                 String receipt = parse[3].split(":")[1];
-                Command subscribe = new Subscribe(destination,Integer.parseInt(id),Integer.parseInt(receipt),this);
+                Command subscribe = new Subscribe(destination, Integer.parseInt(id), Integer.parseInt(receipt), this);
                 toSend = subscribe.execute();
-                connections.send(destination,toSend);
+                connections.send(destination, toSend);
                 break;
-
-            case "SEND": //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
+            }
+            case "SEND": { //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
+                System.out.println("proccesing msg of type Send");
                 String destination2 = parse[1].split(":")[1];
                 String body = parse[3];
-                Command send = new Send(destination2,body,this);
+                Command send = new Send(destination2, body, this);
                 toSend = send.execute();
-                connections.send(destination2,toSend);
+                connections.send(destination2, toSend);
                 break;
-
-            case "UNSUBSCRIBE":
-                String subs_id =  parse[1].split(":")[1];
-                Command unsubscribe = new Unsubscribe(subs_id,this);
+            }
+            case "UNSUBSCRIBE": {
+                System.out.println("proccesing msg of type Unsubscribe");
+                String subs_id = parse[1].split(":")[1];
+                Command unsubscribe = new Unsubscribe(subs_id, this);
                 toSend = unsubscribe.execute();
-                connections.send(connectionId,toSend);
+                connections.send(connectionId, toSend);
                 break;
-
-            case "DISCONNECT":
-                shouldTerminate=true;
+            }
+            case "DISCONNECT": {
+                System.out.println("proccesing msg of type disconnect");
+                shouldTerminate = true;
                 String receipt2 = parse[1].split(":")[1];
-                Command disconnect = new DISCONNECT(Integer.parseInt(receipt2),this);
+                Command disconnect = new DISCONNECT(Integer.parseInt(receipt2), this);
                 toSend = disconnect.execute();
                 connections.disconnect(connectionId); //TODO: Ofer: check if ok
                 connections.send(connectionId, toSend);
 
                 break;
-            default: //TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
-                Error e = new Error("","message received",message,"Invalid message - unable to process");
-                connections.send(connectionId,e.execute());
+            }
+            default: {//TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
+                System.out.println("proccesing msg of type default case - invalid msg recieved -> " + (message.equals("\n") + " " + message.equals("")));
                 break;
-
-
+            }
         }
 
 

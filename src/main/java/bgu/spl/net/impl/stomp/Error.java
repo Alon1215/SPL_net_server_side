@@ -34,6 +34,6 @@ public class Error implements Command {
                 "-----\n" +
                 messageText +
                 "\n-----\n" +
-                details + "\n^@";
+                details + '\n'+'\u0000';
     }
 }

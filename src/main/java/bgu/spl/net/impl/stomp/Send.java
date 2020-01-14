@@ -19,6 +19,6 @@ public class Send implements Command {
                 "MESSAGE\n" +
                 "Message-id:" + protocol.getConnections().getMessageId() + "\n" + "destination:"+destination+"\n\n"+ //TODO: ofer:changed send Frame to Message frame, check if message id should be added here
                 body + "\n" +                                                                                        //TODO: need to add sub's id for each user when sending to him in connectionsImpl
-                "\u0000";
+                +'\u0000';
     }
 }

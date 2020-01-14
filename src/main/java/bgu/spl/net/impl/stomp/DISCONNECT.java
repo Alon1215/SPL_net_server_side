@@ -32,6 +32,6 @@ public class DISCONNECT implements Command {
         protocol.getConnections().getActiveUsers().put(protocol.getActiveUsername(),false);
         protocol.setActiveUsername("default");
         protocol.setShouldTerminate(true);
-        return "RECEIPT\n"+"receipt-id:"+receipt+"\n\n"+"\u0000";
+        return "RECEIPT"+'\n'+"receipt-id:"+receipt+'\n'+'\n'+'\u0000';
     }
 }

@@ -26,7 +26,7 @@ public class Subscribe implements Command {
             return e.execute();
         }
         for(Pair<Integer,String> p:protocol.getMyTopics()){
-            if(p.getValue().compareTo(destination)==0){
+            if(p.getValue().compareTo(destination)==0){ //TODO: probably change from error to just msg
                 Error e= new Error(""+receipt,"user already subscribed","","user "+protocol.getActiveUsername()+" tried to subscribe to genre "+ destination + " but already subscribed");
                 protocol.setShouldTerminate(true);
                 return e.execute();
