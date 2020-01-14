@@ -16,8 +16,12 @@ public class  MessageEncoderDecoderImpl implements MessageEncoderDecoder<String>
         //notice that the top 128 ascii characters have the same representation as their utf-8 counterparts
         //this allow us to do the following comparison
         if (nextByte == '\u0000') {
+            System.out.println("NULL CHAR! Test purposes!");
             return popString();
         }
+        System.out.println(nextByte + " Test purposes!");
+
+
         pushByte(nextByte);
         return null; //not a line yet
     }
