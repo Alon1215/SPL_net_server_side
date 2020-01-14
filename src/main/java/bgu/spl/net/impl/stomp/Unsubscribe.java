@@ -19,10 +19,6 @@ public class Unsubscribe implements Command {
     @Override
     public String execute() {
         LinkedList<Pair<Integer,String>> topics = protocol.getMyTopics();
-        if(protocol.getActiveUsername().compareTo("default")==0){
-            Error e = new Error("","user is not logged in","","no user is logged in,please log in before unsubscribing subscription number "+ subscriptionId,protocol);
-            return e.execute();
-        }
         Pair toRemove=null;
         for(Pair<Integer,String> p:protocol.getMyTopics()){
             if((""+p.getKey()).compareTo(subscriptionId)==0){

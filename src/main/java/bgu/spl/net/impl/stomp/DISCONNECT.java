@@ -19,7 +19,6 @@ public class DISCONNECT implements Command {
     public String execute() {
         if(protocol.getActiveUsername().compareTo("default")==0){
            Error e = new Error("","user is not logged in","","tried to logout but no user is logged in " ,protocol);
-            protocol.getConnections().disconnect(protocol.getConnectionId());
            return e.execute();
        }
         ConnectionsImpl connections = protocol.getConnections();
@@ -28,8 +27,7 @@ public class DISCONNECT implements Command {
             connections.removeUserfromTopicmap(connectId,topic.getValue());
         }
 
-        protocol.getConnections().getActiveUsers().remove(protocol.getActiveUsername());
-        protocol.getConnections().getActiveUsers().put(protocol.getActiveUsername(),false);
+        protocol.getConnections().getActiveUsers().replace(protocol.getActiveUsername(),false);
         protocol.setActiveUsername("default");
         protocol.setShouldTerminate(true);
         return "RECEIPT"+'\n'+"receipt-id:"+receipt+'\n'+'\n'+'\u0000';

@@ -13,7 +13,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
     private int connectionId ;
     private ConnectionsImpl  connections;
     private boolean shouldTerminate;
-    private LinkedList<Pair<Integer,String>> myTopics; //
+    private LinkedList<Pair<Integer,String>> myTopics; // 1st=subscription 2nd=topic
     private String activeUsername;
 
 
@@ -64,7 +64,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public void process(String message) {
-        System.out.println("inside proccess! "+message);
+        System.out.println("inside proccess!\n "+message);
         String [] parse = message.split("\n");
         String opCode= parse[0];
         String toSend;
@@ -85,7 +85,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 String receipt = parse[3].split(":")[1];
                 Command subscribe = new Subscribe(destination, Integer.parseInt(id), Integer.parseInt(receipt), this);
                 toSend = subscribe.execute();
-                connections.send(destination, toSend);
+                connections.send(connectionId, toSend);
                 break;
             }
             case "SEND": { //TODO: ALON: 7.1 2000 - is it suppose to be in capital letters? (same for subscribe)
@@ -107,13 +107,10 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
             }
             case "DISCONNECT": {
                 System.out.println("proccesing msg of type disconnect");
-                shouldTerminate = true;
                 String receipt2 = parse[1].split(":")[1];
                 Command disconnect = new DISCONNECT(Integer.parseInt(receipt2), this);
                 toSend = disconnect.execute();
-                connections.disconnect(connectionId); //TODO: Ofer: check if ok
                 connections.send(connectionId, toSend);
-
                 break;
             }
             default: {//TODO: Alon impl 7.1 200:00 NOT SURE IF VALID
