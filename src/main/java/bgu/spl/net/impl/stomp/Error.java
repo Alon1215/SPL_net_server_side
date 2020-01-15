@@ -30,10 +30,10 @@ public class Error implements Command {
     public String execute() {
         //build error msg according to stomp protocol:
         protocol.setShouldTerminate(true);
-        return "ERROR \n" +
-                "receipt-id: message-" +receipt_id + "\n \n" +
+        return "ERROR\n" +
+                "receipt-id:" +receipt_id + "\n\n" +
                 "message: " + message +
-                "The message: \n" +
+                "\nThe message:\n" +
                 "-----\n" +
                 messageText +
                 "\n-----\n" +

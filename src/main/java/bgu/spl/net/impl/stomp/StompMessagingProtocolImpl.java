@@ -73,7 +73,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
                 System.out.println("proccesing msg of type CONNECT");
                 String loginUser = parse[3].split(":")[1];
                 String pass = parse[4].split(":")[1];
-                Command connect = new CONNECT(loginUser, pass, this);
+                Command connect = new CONNECT(loginUser, pass, this,message);
                 toSend = connect.execute();
                 connections.send(connectionId, toSend);
                 break;
