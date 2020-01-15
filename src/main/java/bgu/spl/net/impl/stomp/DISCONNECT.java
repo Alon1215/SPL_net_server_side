@@ -17,10 +17,10 @@ public class DISCONNECT implements Command {
 
     @Override
     public String execute() {
-        if(protocol.getActiveUsername().compareTo("default")==0){
-           Error e = new Error("","user is not logged in","","tried to logout but no user is logged in " ,protocol);
-           return e.execute();
-       }
+//        if(protocol.getActiveUsername().compareTo("default")==0){ //TODO:ofer: think this error is not needed
+//           Error e = new Error("","user is not logged in","","tried to logout but no user is logged in " ,protocol);
+//           return e.execute();
+//       }
         ConnectionsImpl connections = protocol.getConnections();
         int connectId = protocol.getConnectionId();
         for(Pair<Integer,String> topic :protocol.getMyTopics()){ //delete all subscriptions from topic map
