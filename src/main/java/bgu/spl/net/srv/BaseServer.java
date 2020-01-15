@@ -47,7 +47,7 @@ public abstract class BaseServer<T> implements Server<T> {
                         clientSock,
                         encdecFactory.get(),
                         protocolFactory.get(),connectIdcount,connections);
-                System.out.println("created hander with connect id "+ connectIdcount);
+                System.out.println("created handler with connect id "+ connectIdcount);
                 //our added impl:
                 connections.addHandler(handler,connectIdcount);
                 connectIdcount++;

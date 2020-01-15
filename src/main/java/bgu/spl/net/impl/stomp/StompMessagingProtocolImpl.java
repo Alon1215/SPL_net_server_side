@@ -64,7 +64,7 @@ public class StompMessagingProtocolImpl implements StompMessagingProtocol {
 
     @Override
     public void process(String message) {
-        System.out.println("inside proccess!\n "+message);
+        System.out.println("inside proccess!\n"+message);
         String [] parse = message.split("\n");
         String opCode= parse[0];
         String toSend;

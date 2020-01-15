@@ -16,8 +16,7 @@ public class Send implements Command {
     @Override
     public String execute() {
         return
-                "MESSAGE\n" +
-                "Message-id:" + protocol.getConnections().getMessageId() + "\n" + "destination:"+destination+"\n\n"+ //TODO: ofer:changed send Frame to Message frame, check if message id should be added here
+                "MESSAGE\n" + "destination:"+destination+"\n\n"+ //TODO: ofer:changed send Frame to Message frame, check if message id should be added here
                 body + "\n"+'\u0000';                                                                                         //TODO: need to add sub's id for each user when sending to him in connectionsImpl
 
     }
