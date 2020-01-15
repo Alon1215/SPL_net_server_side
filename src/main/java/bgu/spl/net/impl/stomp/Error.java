@@ -7,6 +7,7 @@ public class Error implements Command {
     private String details;
     private StompMessagingProtocolImpl protocol;
 
+
     /**
      * contructor for error msg, to create an error according
      * to the stomp protocol
@@ -30,6 +31,7 @@ public class Error implements Command {
     public String execute() {
         //build error msg according to stomp protocol:
         protocol.setShouldTerminate(true);
+         //TODO: ofer: added to see if error will log me out
         return "ERROR\n" +
                 "receipt-id:" +receipt_id + "\n\n" +
                 "message: " + message +

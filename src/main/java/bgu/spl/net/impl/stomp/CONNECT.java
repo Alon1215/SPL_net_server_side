@@ -22,13 +22,14 @@ public class CONNECT implements Command {
         if(!connections.getUsers().containsKey(loginUser)){
             connections.getUsers().put(loginUser,passcode); //add new user to map
             connections.getActiveUsers().put(loginUser,true);
-            connections.getConnectIdtoNameMap().put(protocol.getConnectionId(),loginUser);
+//            connections.getConnectIdtoNameMap().put(protocol.getConnectionId(),loginUser);
             output="CONNECTED"+'\n'+"version:1.2"+'\n'+'\n'+'\u0000';
             protocol.setActiveUsername(loginUser);
             add_or_replace_to_ConnectIdtoUserMap();
         }
         else if(connections.getUsers().get(loginUser).compareTo(passcode)==0 && !connections.getActiveUsers().get(loginUser)){ //connected to exsiting user
             output="CONNECTED"+'\n'+"version:1.2"+'\n'+'\n'+'\u0000';
+            connections.getActiveUsers().replace(loginUser,true);
             protocol.setActiveUsername(loginUser);
             add_or_replace_to_ConnectIdtoUserMap();
         }
@@ -46,7 +47,7 @@ public class CONNECT implements Command {
     }
 
     void add_or_replace_to_ConnectIdtoUserMap(){
-        if(!protocol.getConnections().getConnectIdtoNameMap().contains(protocol.getConnectionId()))
+        if(!protocol.getConnections().getConnectIdtoNameMap().containsKey(protocol.getConnectionId()))
             protocol.getConnections().getConnectIdtoNameMap().put(protocol.getConnectionId(),loginUser);
         else
             protocol.getConnections().getConnectIdtoNameMap().replace(protocol.getConnectionId(),loginUser);

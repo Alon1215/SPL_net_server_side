@@ -1,9 +1,7 @@
 package bgu.spl.net.srv;
 
-import bgu.spl.net.impl.stomp.MessageEncoderDecoderImpl;
 import javafx.util.Pair;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,13 +75,16 @@ public class ConnectionsImpl implements Connections<String>{
     @Override
     public void disconnect(int connectionId) {
         //switch his active flag to false, and remove the cHandler from the map
-        if(connectIdtoNameMap.contains(connectionId)) {
+        inactive(connectionId);
+        handlerMap.remove(connectionId);
+    }
+
+    public void inactive(int connectionId) {
+        if(connectIdtoNameMap.containsKey(connectionId)) {
             String user_to_log_out = connectIdtoNameMap.get(connectionId);
-            if (activeUsers.contains(user_to_log_out)) //set his active user as false
+            if (activeUsers.containsKey(user_to_log_out)) //set his active user as false
                 activeUsers.replace(user_to_log_out, false);
         }
-        handlerMap.remove(connectionId);
-
     }
 
     public ConcurrentHashMap<Integer, String> getConnectIdtoNameMap() {
