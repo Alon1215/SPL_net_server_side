@@ -76,13 +76,11 @@ public class ConnectionsImpl implements Connections<String>{
 
     @Override
     public void disconnect(int connectionId) {
+        //switch his active flag to false, and remove the cHandler from the map
         if(connectIdtoNameMap.contains(connectionId)) {
             String user_to_log_out = connectIdtoNameMap.get(connectionId);
-            if (activeUsers.contains(user_to_log_out))
+            if (activeUsers.contains(user_to_log_out)) //set his active user as false
                 activeUsers.replace(user_to_log_out, false);
-            if (activeUsers.contains(user_to_log_out)) {
-                activeUsers.replace(user_to_log_out, false);
-            }
         }
         handlerMap.remove(connectionId);
 

@@ -103,7 +103,7 @@ public class Reactor<T> implements Server<T> {
                 readerFactory.get(),
                 protocolFactory.get(),
                 clientChan,
-                this);
+                this,connectIdcount,connections);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
         connections.addHandler(handler,connectIdcount);
         connectIdcount++;
