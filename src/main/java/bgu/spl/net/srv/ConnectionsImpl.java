@@ -64,7 +64,7 @@ public class ConnectionsImpl implements Connections<String>{
         String[] parser = msg.split("\n"); //
         topicMap.putIfAbsent(channel,new ConcurrentLinkedQueue<>());
         for (Pair<Integer,Integer> p : topicMap.get(channel) ){
-            String toSend = parser[0]+"\n"+"subscription:"+p.getValue()+"\n"+"Message-id:"+getMessageId()+"\n"+"destination:"+channel+"\n\n"+parser[3]+'\u0000'; //make personal msg with sub's id
+            String toSend = parser[0]+"\n"+"subscription:"+p.getValue()+"\n"+"Message-id:"+getMessageId()+"\n"+"destination:"+channel+"\n\n"+parser[3]+"\n\u0000"; //make personal msg with sub's id
             send(p.getKey(),  toSend); // send using send method by connectId
         }
     }
