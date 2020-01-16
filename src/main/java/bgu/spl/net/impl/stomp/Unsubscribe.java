@@ -29,7 +29,7 @@ public class Unsubscribe implements Command {
         if(toRemove != null) {
             protocol.getConnections().removeUserfromTopicmap(protocol.getConnectionId(), (String) toRemove.getValue()); //find subscription pair in the topics queue, and remove it
             topics.remove(toRemove); //remove subscription pair from user's topic list
-            return "RECEIPT\nreceipt-id:"+receipt_id+ "\n\nSubscription number " + subscriptionId + "Successfully removed\n" +'\u0000'; //TODO:: check if this Frame is ok because instructions don't say what to return
+            return "RECEIPT\nreceipt-id:"+receipt_id+ "\n\nSubscription number " + subscriptionId + " Successfully removed\n" +'\u0000'; //TODO:: check if this Frame is ok because instructions don't say what to return
         }
         return "RECEIPT\nreceipt-id:"+receipt_id+ "\n\nuser tried to unsubscribe, not not subscribed, receipt:" +receipt_id+'\n'+  '\u0000';
     }

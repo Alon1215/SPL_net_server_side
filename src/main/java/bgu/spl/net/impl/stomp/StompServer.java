@@ -6,13 +6,18 @@ import bgu.spl.net.srv.Server;
 public class StompServer {
 
     public static void main(String[] args) {
-//        Server.threadPerClient(
-//               1234, //port
-//               () -> new StompMessagingProtocolImpl(), //protocol factory
-//                ()-> new MessageEncoderDecoderImpl() //message encoder decoder factory
-//        ).serve();
-        Server.reactor(4,1234,() -> new StompMessagingProtocolImpl(),  ()-> new MessageEncoderDecoderImpl()).serve();
+        short port = Short.parseShort(args[0]); //extract port from args
+        String serverType = args[1]; // extract type of server
 
+        if (serverType.equals("tpc")) {
+            Server.threadPerClient(
+                    port, //port
+                    () -> new StompMessagingProtocolImpl(), //protocol factory
+                    () -> new MessageEncoderDecoderImpl() //message encoder decoder factory
+            ).serve();
+        } else { //args[1] == reactor
+            Server.reactor(4, port, () -> new StompMessagingProtocolImpl(), () -> new MessageEncoderDecoderImpl()).serve();
+        }
 
     }
 
