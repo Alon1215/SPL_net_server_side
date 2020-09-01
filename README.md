@@ -9,7 +9,5 @@ Dexec.args="<port> tpc’
 * Reactor server:  mvn exec:java -Dexec.mainClass="bgu.spl.net.impl.stomp.StompServer" -
 Dexec.args="<port> reactor
 
-
-
-
+- Client side: https://github.com/Alon1215/SPL_net_client_side
 
