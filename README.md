@@ -1,5 +1,5 @@
-# SPL_net_server_side
-A books-club platform, reactor based server - client project, based on STOMP protocol.
+# Book_Club_net_server_side (SPL)
+A book-club platform, reactor based server - client project, based on STOMP protocol.
 
 Project in System Programming course ( in Ben Gurion University) , writing Reactor server in java, and client side in C++.
 a tpc server is also provided, and can be chosen as an argument while running the server.
